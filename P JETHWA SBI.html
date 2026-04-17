@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finance Manager</title>
+
+<!-- Google Fonts & Font Awesome -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 30px;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Blinking Animation for Green Dot */
+  @keyframes blink {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.1);
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.3);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+  }
+
+  @keyframes blinkFast {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    25% {
+      opacity: 0.4;
+      transform: scale(0.9);
+    }
+    75% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Header Styles - Admin Icon Right Side */
+  .header {
+    background: white;
+    padding: 15px 25px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    animation: slideInLeft 0.6s ease-out;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    position: relative;
+  }
+
+  .admin-profile:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    animation: pulse 0.5s ease;
+  }
+
+  /* Green Blinking Dot */
+  .online-dot {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    width: 12px;
+    height: 12px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: blink 1.5s infinite ease-in-out;
+  }
+
+  .admin-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    position: relative;
+  }
+
+  .admin-info {
+    text-align: right;
+  }
+
+  .admin-name {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 14px;
+  }
+
+  .admin-role {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  /* Search Box Styles */
+  .search-box {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    animation: slideInRight 0.6s ease-out;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .search-box input {
+    flex: 2;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    font-size: 16px;
+    font-family: monospace;
+    transition: all 0.3s ease;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .search-box button {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Data Container - Desktop Grid Layout */
+  #data {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+    animation: fadeInUp 0.7s ease-out;
+  }
+
+  /* Card Styles */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    animation: slideInRight 0.5s ease-out;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .debit {
+    border-left: 5px solid #ef4444;
+  }
+
+  .credit {
+    border-left: 5px solid #10b981;
+  }
+
+  /* Typography in Cards */
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+  }
+
+  .card b {
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .debit b {
+    color: #ef4444;
+  }
+
+  .credit b {
+    color: #10b981;
+  }
+
+  .amount {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .debit .amount {
+    color: #ef4444;
+  }
+
+  .credit .amount {
+    color: #10b981;
+  }
+
+  /* Customer Input Styles */
+  .customer-input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    margin: 15px 0;
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .customer-input-group input {
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s;
+  }
+
+  .customer-input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  }
+
+  /* Button Styles */
+  button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-add {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    margin-right: 10px;
+  }
+
+  .btn-add:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .btn-submit:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-remove {
+    background: #ef4444;
+    color: white;
+  }
+
+  .btn-remove:hover {
+    background: #dc2626;
+    transform: scale(1.02);
+  }
+
+  /* Small Text */
+  .small {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 12px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef3c7;
+    padding: 8px 15px;
+    border-radius: 25px;
+  }
+
+  /* Customer Display */
+  .customer-display {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #4338ca;
+    transition: all 0.3s ease;
+  }
+
+  .customer-display:hover {
+    background: #e9ecef;
+  }
+
+  /* Loading State */
+  .loading {
+    text-align: center;
+    padding: 60px;
+    grid-column: 1 / -1;
+  }
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e0e0e0;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: rotate 1s linear infinite;
+    margin: 0 auto 15px;
+  }
+
+  /* No Data */
+  .no-data {
+    text-align: center;
+    padding: 60px;
+    color: #9ca3af;
+    grid-column: 1 / -1;
+  }
+
+  .no-data i {
+    font-size: 50px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #1f2937;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 12px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .toast.success {
+    background: #10b981;
+  }
+
+  .toast.error {
+    background: #ef4444;
+  }
+
+  /* Date info */
+  .date-info {
+    color: #6b7280;
+    font-size: 13px;
+    margin: 10px 0;
+  }
+
+  /* Saved Customers List */
+  .saved-customers-list {
+    margin-top: 10px;
+  }
+
+  .customer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    body {
+      padding: 15px;
+    }
+    
+    #data {
+      grid-template-columns: 1fr;
+    }
+    
+    .search-box {
+      flex-direction: column;
+    }
+    
+    .search-box button {
+      justify-content: center;
+    }
+    
+    .customer-input-group {
+      grid-template-columns: 1fr;
+    }
+    
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .admin-name {
+      font-size: 12px;
+    }
+    
+    .admin-icon {
+      width: 35px;
+      height: 35px;
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  
+  <!-- Header Section - Admin Icon with Green Blinking Dot -->
+  <div class="header">
+    <div class="admin-profile">
+      <div class="admin-icon">
+        <i class="fas fa-user-shield"></i>
+        <div class="online-dot"></div>
+      </div>
+      <div class="admin-info">
+        <div class="admin-name">Sourav Mishra</div>
+        <div class="admin-role">Administrator</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-box">
+    <input type="text" id="dateInput" placeholder="DD/MM/YYYY" autocomplete="off">
+    <button onclick="loadData()">
+      <i class="fas fa-search"></i> Search
+    </button>
+    <button onclick="loadToday()">
+      <i class="fas fa-calendar-day"></i> Today
+    </button>
+  </div>
+
+  <!-- Data Container -->
+  <div id="data"></div>
+
+</div>
+
+<script>
+
+const API = "https://script.google.com/macros/s/AKfycbzbQVMJv1tkA2Joh5zhVkDZ-vX5RG9rYcTODNzO482zZFH8oF3j_2F8sy_eF7QSwGFXDA/exec";
+
+// Global object to store customers per row without refresh
+let allCustomersData = {};
+
+// Load today's date on page load
+function loadToday() {
+  let today = new Date();
+  let dd = String(today.getDate()).padStart(2, '0');
+  let mm = String(today.getMonth() + 1).padStart(2, '0');
+  let yyyy = today.getFullYear();
+  document.getElementById("dateInput").value = `${dd}/${mm}/${yyyy}`;
+  loadData();
+}
+
+function loadData() {
+  let date = document.getElementById("dateInput").value;
+  
+  if (!date) {
+    showToast("Please enter a date (DD/MM/YYYY)", "error");
+    return;
+  }
+  
+  // Reset customers data for new date
+  allCustomersData = {};
+  
+  // Show loading
+  document.getElementById("data").innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading transactions...</p>
+    </div>
+  `;
+
+  fetch(API + "?date=" + date)
+    .then(res => res.json())
+    .then(showData)
+    .catch(err => {
+      console.error(err);
+      showToast("Network error! Please check connection.", "error");
+      document.getElementById("data").innerHTML = `
+        <div class="no-data">
+          <i class="fas fa-wifi"></i>
+          <p>Network Error</p>
+          <small>Please check your internet connection</small>
+        </div>
+      `;
+    });
+}
+
+function showData(res) {
+  let box = document.getElementById("data");
+  box.innerHTML = "";
+
+  if (res.status !== "success" || !res.data || res.data.length === 0) {
+    box.innerHTML = `
+      <div class="no-data">
+        <i class="fas fa-inbox"></i>
+        <p>No Data Found</p>
+        <small>Try another date or add transactions in Google Sheet</small>
+      </div>
+    `;
+    return;
+  }
+
+  res.data.forEach(item => {
+    let cls = item.type === "DEBIT" ? "card debit" : "card credit";
+    let icon = item.type === "DEBIT" ? "fa-arrow-down" : "fa-arrow-up";
+    
+    // Initialize customers array for this row if not exists
+    if (!allCustomersData[item.row]) {
+      allCustomersData[item.row] = [];
+    }
+    
+    // Parse existing customers from sheet
+    let existingCustomers = [];
+    let existingCustomerText = "";
+    if (item.customerDetails) {
+      try {
+        existingCustomers = JSON.parse(item.customerDetails);
+        existingCustomerText = existingCustomers.map(c => `${c.name}(₹${c.amount})`).join(", ");
+        allCustomersData[item.row] = [...existingCustomers];
+      } catch(e) {}
+    }
+    
+    // Calculate remaining amount
+    let totalAdded = allCustomersData[item.row].reduce((sum, c) => sum + c.amount, 0);
+    let remainingAmount = item.amount - totalAdded;
+    
+    // Generate existing customers HTML
+    let customersHtml = "";
+    if (allCustomersData[item.row].length > 0) {
+      customersHtml = `<div class="saved-customers-list"><strong>📋 Saved Customers:</strong>`;
+      allCustomersData[item.row].forEach((c, idx) => {
+        customersHtml += `
+          <div class="customer-item">
+            <span><i class="fas fa-user"></i> ${c.name}</span>
+            <span>₹${c.amount}</span>
+            <button class="btn-remove" style="padding:5px 10px; font-size:12px;" onclick="removeExistingCustomer(${item.row}, ${idx}, ${item.amount})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+      });
+      customersHtml += `</div>`;
+    }
+    
+    box.innerHTML += `
+      <div class="${cls}" id="card_${item.row}">
+        <div class="card-header">
+          <b><i class="fas ${icon}"></i> ${item.type}</b>
+          <span class="amount">₹${item.amount}</span>
+        </div>
+        <div class="date-info"><i class="fas fa-calendar-alt"></i> ${item.valueDate}</div>
+
+        <div id="customersList_${item.row}">
+          ${customersHtml}
+        </div>
+        
+        <div id="newCustomers_${item.row}"></div>
+
+        <button class="btn-add" onclick="addCustomerField(${item.row}, ${item.amount})">
+          <i class="fas fa-user-plus"></i> Add Customer
+        </button>
+
+        <div class="small">
+          <i class="fas fa-clock"></i> Remaining: ₹<span id="remain_${item.row}">${remainingAmount}</span>
+        </div>
+
+        <button class="btn-submit" onclick="saveAllCustomers(${item.row}, ${item.amount})">
+          <i class="fas fa-save"></i> Submit
+        </button>
+
+        <div class="customer-display" id="customerDisplay_${item.row}">
+          ${existingCustomerText ? `<i class="fas fa-check-circle"></i> ${existingCustomerText}` : '<i class="fas fa-info-circle"></i> No customers added yet'}
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ADD CUSTOMER FIELD (without refreshing previous data)
+function addCustomerField(row, total) {
+  let div = document.getElementById("newCustomers_" + row);
+  let newId = Date.now();
+
+  div.innerHTML += `
+    <div class="customer-input-group" id="customerGroup_${row}_${newId}" style="animation: slideInRight 0.3s ease-out;">
+      <input placeholder="Customer Name" id="name_${row}_${newId}" class="tempName_${row}">
+      <input placeholder="Amount" id="amt_${row}_${newId}" class="tempAmt_${row}" oninput="calcRemainTemp(${row}, ${total})">
+      <button class="btn-remove" onclick="removeTempCustomerField(${row}, ${newId}, ${total})">
+        <i class="fas fa-trash"></i> Remove
+      </button>
+    </div>
+  `;
+  
+  // Focus on the name input
+  document.getElementById(`name_${row}_${newId}`).focus();
+}
+
+// Remove temporary customer field
+function removeTempCustomerField(row, fieldId, total) {
+  let element = document.getElementById(`customerGroup_${row}_${fieldId}`);
+  if (element) {
+    element.remove();
+    calcRemainTemp(row, total);
+    showToast("Customer field removed", "success");
+  }
+}
+
+// Calculate remaining for temporary fields
+function calcRemainTemp(row, total) {
+  let tempAmts = document.querySelectorAll(`.tempAmt_${row}`);
+  let existingAmts = allCustomersData[row] || [];
+  
+  let existingSum = existingAmts.reduce((sum, c) => sum + c.amount, 0);
+  let tempSum = 0;
+  
+  tempAmts.forEach(input => {
+    tempSum += Number(input.value || 0);
+  });
+  
+  let totalSum = existingSum + tempSum;
+  let remaining = total - totalSum;
+  
+  let remainSpan = document.getElementById(`remain_${row}`);
+  if (remainSpan) {
+    remainSpan.innerText = remaining;
+    
+    if (remaining < 0) {
+      remainSpan.style.color = "#ef4444";
+      remainSpan.style.fontWeight = "bold";
+    } else if (remaining === 0) {
+      remainSpan.style.color = "#10b981";
+      remainSpan.style.fontWeight = "bold";
+    } else {
+      remainSpan.style.color = "#f59e0b";
+      remainSpan.style.fontWeight = "normal";
+    }
+  }
+}
+
+// Remove existing customer
+function removeExistingCustomer(row, index, total) {
+  if (allCustomersData[row] && allCustomersData[row][index]) {
+    allCustomersData[row].splice(index, 1);
+    
+    // Rebuild the customers list display
+    let customersHtml = "";
+    if (allCustomersData[row].length > 0) {
+      customersHtml = `<div class="saved-customers-list"><strong>📋 Saved Customers:</strong>`;
+      allCustomersData[row].forEach((c, idx) => {
+        customersHtml += `
+          <div class="customer-item">
+            <span><i class="fas fa-user"></i> ${c.name}</span>
+            <span>₹${c.amount}</span>
+            <button class="btn-remove" style="padding:5px 10px; font-size:12px;" onclick="removeExistingCustomer(${row}, ${idx}, ${total})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+      });
+      customersHtml += `</div>`;
+    }
+    
+    document.getElementById(`customersList_${row}`).innerHTML = customersHtml;
+    
+    // Update remaining
+    let existingSum = allCustomersData[row].reduce((sum, c) => sum + c.amount, 0);
+    let tempAmts = document.querySelectorAll(`.tempAmt_${row}`);
+    let tempSum = 0;
+    tempAmts.forEach(input => {
+      tempSum += Number(input.value || 0);
+    });
+    
+    let remaining = total - (existingSum + tempSum);
+    let remainSpan = document.getElementById(`remain_${row}`);
+    if (remainSpan) {
+      remainSpan.innerText = remaining;
+    }
+    
+    // Update display text
+    let customerText = allCustomersData[row].map(c => `${c.name}(₹${c.amount})`).join(", ");
+    document.getElementById(`customerDisplay_${row}`).innerHTML = customerText ? `<i class="fas fa-check-circle"></i> ${customerText}` : '<i class="fas fa-info-circle"></i> No customers added yet';
+    
+    showToast("Customer removed", "success");
+  }
+}
+
+// SAVE ALL CUSTOMERS
+function saveAllCustomers(row, total) {
+  // Get temporary customers
+  let tempNames = document.querySelectorAll(`.tempName_${row}`);
+  let tempAmts = document.querySelectorAll(`.tempAmt_${row}`);
+  
+  let newCustomers = [];
+  
+  for (let i = 0; i < tempNames.length; i++) {
+    let name = tempNames[i].value.trim();
+    let amt = Number(tempAmts[i].value || 0);
+    
+    if (name && amt > 0) {
+      newCustomers.push({ name: name, amount: amt });
+    }
+  }
+  
+  // Combine existing and new customers
+  let allCustomers = [...(allCustomersData[row] || []), ...newCustomers];
+  
+  if (allCustomers.length === 0) {
+    showToast("Please add at least one customer", "error");
+    return;
+  }
+  
+  let totalSum = allCustomers.reduce((sum, c) => sum + c.amount, 0);
+  
+  if (totalSum !== total) {
+    showToast(`Amount mismatch! Total: ₹${total}, Sum: ₹${totalSum}`, "error");
+    return;
+  }
+  
+  showToast("Saving customers...", "success");
+  
+  fetch(API, {
+    method: "POST",
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      row: row,
+      customers: allCustomers
+    })
+  })
+  .then(() => {
+    showToast("✅ Saved successfully!", "success");
+    
+    // Update customer display
+    let customerText = allCustomers.map(c => `${c.name}(₹${c.amount})`).join(", ");
+    document.getElementById(`customerDisplay_${row}`).innerHTML = `<i class="fas fa-check-circle"></i> ${customerText}`;
+    
+    // Update local data
+    allCustomersData[row] = [...allCustomers];
+    
+    // Clear temporary inputs
+    document.getElementById(`newCustomers_${row}`).innerHTML = "";
+    
+    // Update remaining
+    let remainSpan = document.getElementById(`remain_${row}`);
+    if (remainSpan) {
+      remainSpan.innerText = 0;
+      remainSpan.style.color = "#10b981";
+    }
+    
+    // Rebuild customers list
+    let customersHtml = `<div class="saved-customers-list"><strong>📋 Saved Customers:</strong>`;
+    allCustomers.forEach((c, idx) => {
+      customersHtml += `
+        <div class="customer-item">
+          <span><i class="fas fa-user"></i> ${c.name}</span>
+          <span>₹${c.amount}</span>
+          <button class="btn-remove" style="padding:5px 10px; font-size:12px;" onclick="removeExistingCustomer(${row}, ${idx}, ${total})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      `;
+    });
+    customersHtml += `</div>`;
+    document.getElementById(`customersList_${row}`).innerHTML = customersHtml;
+    
+    // Animation on card
+    let card = document.getElementById(`card_${row}`);
+    if (card) {
+      card.style.animation = "none";
+      setTimeout(() => {
+        card.style.animation = "pulse 0.5s ease";
+      }, 10);
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showToast("Error saving data", "error");
+  });
+}
+
+// Helper function for toast notifications
+function showToast(message, type) {
+  let toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Load today's data on page load
+window.addEventListener("DOMContentLoaded", () => {
+  loadToday();
+});
+
+</script>
+
+</body>
+</html>
